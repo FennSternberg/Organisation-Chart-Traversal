@@ -10,8 +10,17 @@ if __name__ == "__main__":
         input_path = argv[1]
         org = Organization(input_path)
         for line in ascii_forest(org):
-            print(line)
-        
+            try:
+                print(line)
+            except UnicodeEncodeError:
+                # Fallback if unable to render characters
+                safe = (
+                    line.replace("├", "+")
+                    .replace("└", "+")
+                    .replace("│", "|")
+                    .replace("─", "-")
+                )
+                print(safe)
         sys.exit(0)
 
     input_path, name_a, name_b = argv

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Iterable
 from dataclasses import dataclass
 import re
 
@@ -17,6 +17,9 @@ class Organization:
         employees = self._process_file(path)
         self.employees: Dict[int, Employee] = employees
         self.children: Dict[int, List[int]] = {eid: [] for eid in employees}
+        for e in employees.values():
+            if e.manager_id is not None:
+                self.children[e.manager_id].append(e.emp_id)
     
     def _process_file(self, path:str)->Dict[int, Employee]:
         # Implementation to read file and create employees dictionary
@@ -37,6 +40,7 @@ class Organization:
                 name = parts[2]
                 manager_id = int(parts[3]) if parts[3] != "" else None
 
+                # When comparing names, the case of letters is not significant, and neither are leading or trailing spaces or runs of multiple spaces
                 _SPACE_RE = re.compile(r"\s+")
                 name_normalized = _SPACE_RE.sub(" ", name).strip().lower()
 
@@ -47,6 +51,20 @@ class Organization:
                     manager_id=manager_id,
                 )
         return employees
+    
+    def roots(self) -> List[int]:
+        roots = []
+        for eid, e in self.employees.items():
+            if e.manager_id is None:
+                roots.append(eid)
+        return sorted(roots)
+    
+    def format_label(self, eid: int) -> str:
+        e = self.employees[eid]
+        return f"{e.name_display} ({e.emp_id})"
+    
+    def get_children(self, eid: int) -> List[int]:
+        return sorted(self.children.get(eid, []))
 
 
 

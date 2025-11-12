@@ -66,5 +66,11 @@ class TestInputLoading(unittest.TestCase):
         self.generic_superheroes_input_check(org)
     
     def test_missing_employee_id(self):
+        """Test that missing employee ID raises ValueError."""
         with self.assertRaises(ValueError):
             load_org("superheroes_missing_employee_id.txt")
+
+    def test_parser_raises_on_duplicate_ids(self):
+        """Test that duplicate employee IDs raise ValueError."""
+        with self.assertRaises(ValueError):
+            load_org("superheroes_duplicate_ids.txt")

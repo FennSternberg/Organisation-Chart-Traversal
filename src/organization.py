@@ -48,6 +48,11 @@ class Organization:
                     raise ValueError(
                         f"Invalid or missing employee ID at line {lineno}: {parts[1]!r}"
                     ) from None
+                
+                if emp_id in employees:
+                    # Duplicate employee IDs are invalid
+                    raise ValueError(f"Duplicate employee ID detected: {emp_id}")
+                
                 name = parts[2]
                 manager_id = int(parts[3]) if parts[3] != "" else None
 

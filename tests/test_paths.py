@@ -131,7 +131,7 @@ class TestRobustness(unittest.TestCase):
             path,
             "Batman (16) -> Black Widow (6) -> Gonzo the Great (2)",
         )
-        
+
     def test_equivalent_with_extra_spaces(self):
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("  BATMAN   ")
@@ -141,4 +141,25 @@ class TestRobustness(unittest.TestCase):
         self.assertEqual(
             path,
             "Batman (16) -> Black Widow (6) -> Gonzo the Great (2)",
+        )
+
+class TestSingleChain(unittest.TestCase):
+    def test_down_chain(self):
+        org = load_org("single_chain.txt")
+        a_id = org.find_employee_ids_by_name("Node1")[0]
+        b_id = org.find_employee_ids_by_name("Node5")[0]
+        path = org.format_path_between(a_id, b_id)
+        self.assertEqual(
+            path,
+            "Node1 (1) <- Node2 (2) <- Node3 (3) <- Node4 (4) <- Node5 (5)",
+        )
+    
+    def test_up_chain(self):
+        org = load_org("single_chain.txt")
+        a_id = org.find_employee_ids_by_name("Node5")[0]
+        b_id = org.find_employee_ids_by_name("Node1")[0]
+        path = org.format_path_between(a_id, b_id)
+        self.assertEqual(
+            path,
+            "Node5 (5) -> Node4 (4) -> Node3 (3) -> Node2 (2) -> Node1 (1)",
         )

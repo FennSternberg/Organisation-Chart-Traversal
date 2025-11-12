@@ -31,7 +31,7 @@ class Organization:
         """Process the input file and return a mapping of employee ID to Employee."""
         employees: Dict[int, Employee] = {}
         with open(path, "r", encoding="utf-8") as f:
-            for line in f:
+            for lineno, line in enumerate(f):
                 if not line.strip():
                     # Skip empty lines
                     continue
@@ -41,8 +41,13 @@ class Organization:
                 if parts[1].lower() == "employee id":
                     # header row
                     continue
-
-                emp_id = int(parts[1])
+                try:
+                    emp_id = int(parts[1])
+                except ValueError:
+                    # Employee ID is required and must be numeric
+                    raise ValueError(
+                        f"Invalid or missing employee ID at line {lineno}: {parts[1]!r}"
+                    ) from None
                 name = parts[2]
                 manager_id = int(parts[3]) if parts[3] != "" else None
 

@@ -110,6 +110,9 @@ class Organization:
         chain_a = self.get_chain_to_root(a)
         chain_b = self.get_chain_to_root(b)
         lca = self._lca_from_chains(chain_a, chain_b)
+
+        if not lca:
+            raise ValueError("No communication path found between the two employees")
         
         # Upwards from a to LCA
         parts: List[str] = []

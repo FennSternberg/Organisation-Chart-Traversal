@@ -13,7 +13,6 @@ def load_org(case_filename: str) -> Organization:
 
 
 class TestInputLoading(unittest.TestCase):
-
     def generic_superheroes_input_check(self, org: Organization):
         self.assertEqual(len(org.employees), 8)
 

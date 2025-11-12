@@ -15,6 +15,10 @@ class TestRoots(unittest.TestCase):
     def test_superheroes(self):
         org = load_org("superheroes.txt")
         self.assertEqual(org.roots(), [1])
+        
+    def test_multiple_roots(self):
+        org = load_org("superheroes_multiple_roots.txt")
+        self.assertEqual(org.roots(), [1, 3])
 
 
 class TestFindEmployeesByName(unittest.TestCase):

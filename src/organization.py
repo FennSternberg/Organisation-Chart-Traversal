@@ -2,6 +2,11 @@ from typing import Dict, List, Optional, Iterable
 from dataclasses import dataclass
 import re
 
+def normalize_name(name: str) -> str:
+    """Normalize a name by removing extra spaces and converting to lowercase."""
+    _SPACE_RE = re.compile(r"\s+")
+    return _SPACE_RE.sub(" ", name).strip().lower()
+
 @dataclass
 class Employee:
     """Class representing an employee in the organisation."""
@@ -21,8 +26,9 @@ class Organization:
             if e.manager_id is not None:
                 self.children[e.manager_id].append(e.emp_id)
     
-    def _process_file(self, path:str)->Dict[int, Employee]:
-        # Implementation to read file and create employees dictionary
+    @staticmethod
+    def _process_file(path:str)->Dict[int, Employee]:
+        """Process the input file and return a mapping of employee ID to Employee."""
         employees: Dict[int, Employee] = {}
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
@@ -40,9 +46,7 @@ class Organization:
                 name = parts[2]
                 manager_id = int(parts[3]) if parts[3] != "" else None
 
-                # When comparing names, the case of letters is not significant, and neither are leading or trailing spaces or runs of multiple spaces
-                _SPACE_RE = re.compile(r"\s+")
-                name_normalized = _SPACE_RE.sub(" ", name).strip().lower()
+                name_normalized = normalize_name(name)
 
                 employees[emp_id] = Employee(
                     emp_id=emp_id,
@@ -53,6 +57,7 @@ class Organization:
         return employees
     
     def roots(self) -> List[int]:
+        """Return a list of root employee IDs (those without a manager)."""
         roots = []
         for eid, e in self.employees.items():
             if e.manager_id is None:
@@ -64,8 +69,61 @@ class Organization:
         return f"{e.name_display} ({e.emp_id})"
     
     def get_children(self, eid: int) -> List[int]:
+        """Return a list of direct report employee IDs for the given employee ID."""
         return sorted(self.children.get(eid, []))
-
-
-
     
+    def find_employee_ids_by_name(self, name) -> List[int]:
+        """Find employee IDs matching the given name (case and space insensitive)."""
+        ids = [e.emp_id for e in self.employees.values() if e.name_normalized == normalize_name(name)]
+        return sorted(ids)
+    
+    def get_chain_to_root(self, eid: int, max_depth: int = 10000) -> List[int]:
+        """Return the chain of employee IDs from the given employee to the root."""
+        chain = []
+        seen = set()
+        current = eid
+        depth = 0
+        while current is not None:
+            if current in seen:
+                raise ValueError("Cycle detected in management chain")
+            seen.add(current)
+            chain.append(current)
+            current = self.employees[current].manager_id
+            depth += 1
+            if depth > max_depth:
+                raise ValueError("Exceeded maximum chain depth")
+        return chain
+ 
+    @staticmethod
+    def _lca_from_chains(chain_a: List[int], chain_b: List[int]) -> Optional[int]:
+        """Return the lowest common ancestor from two chains to root."""
+        set_b = set(chain_b)
+        for eid in chain_a:
+            if eid in set_b:
+                return eid
+        return None
+        
+    def format_path_between(self, a: int, b: int) -> str:
+        """Format the communication path between two employee IDs."""
+        if a == b:
+            return self.format_label(a)
+        chain_a = self.get_chain_to_root(a)
+        chain_b = self.get_chain_to_root(b)
+        lca = self._lca_from_chains(chain_a, chain_b)
+        
+        # Upwards from a to LCA
+        parts: List[str] = []
+        for eid in chain_a:
+            parts.append(self.format_label(eid))
+            if eid == lca:
+                break
+            parts.append("->")
+        
+        # Downwards from LCA to b (excluding LCA)
+        idx_lca_b = chain_b.index(lca)
+        down = list(reversed(chain_b[:idx_lca_b]))
+        for eid in down:
+            parts.append("<-")
+            parts.append(self.format_label(eid))
+        return " ".join(parts)
+            

@@ -25,3 +25,12 @@ if __name__ == "__main__":
 
     input_path, name_a, name_b = argv
     org = Organization(input_path)
+    matches_a = org.find_employee_ids_by_name(name_a)
+    matches_b = org.find_employee_ids_by_name(name_b)
+
+    # later implment user interaction to select among multiple matches
+    a_id = matches_a[0]
+    b_id = matches_b[0]
+
+    fmt = org.format_path_between(a_id, b_id)
+    print(fmt)

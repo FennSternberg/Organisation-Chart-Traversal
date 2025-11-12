@@ -62,3 +62,83 @@ class TestMultipleRoots(unittest.TestCase):
             path,
             "Super Ted (15) -> Invisible Woman (3) <- Hit Girl (12)",
         )
+
+class TestRobustness(unittest.TestCase):
+
+    def batman_to_super_ted(self, org:Organization):
+        a_ids = org.find_employee_ids_by_name("Batman")
+        b_ids = org.find_employee_ids_by_name("Super Ted")
+        path = org.format_path_between(a_ids[0], b_ids[0])
+        self.assertEqual(
+            path,
+            "Batman (16) -> Black Widow (6) -> Gonzo the Great (2) -> Dangermouse (1) <- Invisible Woman (3) <- Super Ted (15)",
+        )
+
+    def test_order_independence(self):
+        org = load_org("superheroes_shuffled.txt")
+        self.batman_to_super_ted(org)
+
+    def test_name_normalization(self):
+        org = load_org("superheroes.txt")
+        self.batman_to_super_ted(org)
+    
+    def test_messy_table(self):
+        org = load_org("superheroes_messy_table.txt")
+        self.batman_to_super_ted(org)
+    
+    def test_non_table_lines_ignored(self):
+        org = load_org("superheroes_non_table_lines.txt")
+        self.batman_to_super_ted(org)
+    
+    def test_missing_manager(self):
+        """Test that missing manager ID raises ValueError when relevant to path."""
+        org = load_org("superheroes_missing_manager.txt")
+        a_id = org.find_employee_ids_by_name("Batman")[0]
+        b_id = org.find_employee_ids_by_name("Dangermouse")[0]
+        with self.assertRaises(ValueError):
+            org.format_path_between(a_id, b_id)
+        
+    
+    def test_missing_manager_still_works_if_irrelevant(self):
+        """Test that missing manager ID does not prevent path formatting if not relevant."""
+        org = load_org("superheroes_missing_manager.txt")
+        a_id = org.find_employee_ids_by_name("Catwoman")[0]
+        b_id = org.find_employee_ids_by_name("Dangermouse")[0]
+        path = org.format_path_between(a_id, b_id)
+        self.assertEqual(
+            path,
+            "Catwoman (17) -> Black Widow (6) -> Gonzo the Great (2) -> Dangermouse (1)",
+        )
+    
+    def test_not_equivalent(self):
+        org = load_org("superheroes_spaces_and_caps.txt")
+        a_ids = org.find_employee_ids_by_name("Gonzo the Great")
+        b_ids = org.find_employee_ids_by_name("gon Zot Heg Reat")
+        self.assertTrue(a_ids and b_ids)
+        path = org.format_path_between(a_ids[0], b_ids[0])
+        self.assertEqual(
+            path,
+            "Gonzo the Great (2) <- Black Widow (6) <- Gon Zot Heg Reat (18)",
+        )
+
+    def test_equivalent(self):
+        org = load_org("superheroes_spaces_and_caps.txt")
+        a_ids = org.find_employee_ids_by_name("batman")
+        b_ids = org.find_employee_ids_by_name("gonzo the GREAT")
+        self.assertTrue(a_ids and b_ids)
+        path = org.format_path_between(a_ids[0], b_ids[0])
+        self.assertEqual(
+            path,
+            "Batman (16) -> Black Widow (6) -> Gonzo the Great (2)",
+        )
+        
+    def test_equivalent_with_extra_spaces(self):
+        org = load_org("superheroes_spaces_and_caps.txt")
+        a_ids = org.find_employee_ids_by_name("  BATMAN   ")
+        b_ids = org.find_employee_ids_by_name(" Gonzo   the Great ")
+        self.assertTrue(a_ids and b_ids)
+        path = org.format_path_between(a_ids[0], b_ids[0])
+        self.assertEqual(
+            path,
+            "Batman (16) -> Black Widow (6) -> Gonzo the Great (2)",
+        )

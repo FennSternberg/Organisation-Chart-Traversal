@@ -2,10 +2,14 @@ from typing import Dict, List, Optional, Iterable
 from dataclasses import dataclass
 import re
 
+def collapse_spaces(s: str) -> str:
+    _SPACE_RE = re.compile(r"\s+")
+    return _SPACE_RE.sub(" ", s.strip())
+
 def normalize_name(name: str) -> str:
     """Normalize a name by removing extra spaces and converting to lowercase."""
-    _SPACE_RE = re.compile(r"\s+")
-    return _SPACE_RE.sub(" ", name).strip().lower()
+    
+    return collapse_spaces(name).lower()
 
 @dataclass
 class Employee:
@@ -23,7 +27,7 @@ class Organization:
         self.employees: Dict[int, Employee] = employees
         self.children: Dict[int, List[int]] = {eid: [] for eid in employees}
         for e in employees.values():
-            if e.manager_id is not None:
+            if e.manager_id is not None and e.manager_id in self.employees:
                 self.children[e.manager_id].append(e.emp_id)
     
     @staticmethod
@@ -60,7 +64,7 @@ class Organization:
 
                 employees[emp_id] = Employee(
                     emp_id=emp_id,
-                    name_display=name,
+                    name_display=collapse_spaces(name),
                     name_normalized=name_normalized,
                     manager_id=manager_id,
                 )
@@ -94,6 +98,9 @@ class Organization:
         current = eid
         depth = 0
         while current is not None:
+            if current not in self.employees:
+                raise ValueError(f"Employee ID {current} not found in organisation")
+            
             if current in seen:
                 raise ValueError("Cycle detected in management chain")
             seen.add(current)

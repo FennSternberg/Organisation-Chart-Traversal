@@ -3,8 +3,7 @@ import unittest
 from src.organization import Organization
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CASE_DIR = os.path.join(BASE_DIR, "test_inputs")
-
+CASE_DIR = os.path.join(BASE_DIR, "tests\\test_inputs")
 
 def load_org(case_filename: str) -> Organization:
     return Organization(os.path.join(CASE_DIR, case_filename))
@@ -32,7 +31,6 @@ class TestSuperheroesExample(unittest.TestCase):
         )
 
 class TestMultipleRoots(unittest.TestCase):
-
     def test_multiple_roots_no_path(self):
         """
         Test that when there are multiple roots (missing manager ID's) and no path exists between two employees,

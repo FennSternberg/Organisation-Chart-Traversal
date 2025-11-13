@@ -5,7 +5,8 @@ import os
 import unittest
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CASE_DIR = os.path.join(BASE_DIR, "test_inputs")
+CASE_DIR = os.path.join(BASE_DIR, "tests\\test_inputs")
+
 class TestCLI(unittest.TestCase):
     def test_non_unique_names(self):
         """Test that when multiple employees share the same name, the program prompts for disambiguation."""

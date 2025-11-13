@@ -1,12 +1,9 @@
 import os
 import unittest
-
 from src.organization import Organization
 
-
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
-CASE_DIR = os.path.join(BASE_DIR, "test_inputs")
-
+CASE_DIR = os.path.join(BASE_DIR, "tests\\test_inputs")
 
 def load_org(case_filename: str) -> Organization:
     return Organization(os.path.join(CASE_DIR, case_filename))

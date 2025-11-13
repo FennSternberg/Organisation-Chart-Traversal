@@ -51,6 +51,14 @@ def main(argv=None):
     matches_a = org.find_employee_ids_by_name(name_a)
     matches_b = org.find_employee_ids_by_name(name_b)
 
+    if not matches_a:
+        sys.stderr.write(f"No employees found matching '{name_a}'.\n")
+        return 1
+    
+    if not matches_b:
+        sys.stderr.write(f"No employees found matching '{name_b}'.\n")
+        return 1
+
     # select among multiple matches
     a_id = choose_id("first", name_a, matches_a)
     b_id = choose_id("second", name_b, matches_b)

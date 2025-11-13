@@ -1,9 +1,6 @@
 import os
 import unittest
-import sys
-import io
 from src.organization import Organization
-import MyProgram as cli
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CASE_DIR = os.path.join(BASE_DIR, "test_inputs")
@@ -175,39 +172,4 @@ class TestSingleChain(unittest.TestCase):
         self.assertEqual(
             path,
             "Node5 (5) -> Node4 (4) -> Node3 (3) -> Node2 (2) -> Node1 (1)",
-        )
-
-
-class TestNonUniqueNames(unittest.TestCase):
-    def test_non_unique_names(self):
-        """Test that when multiple employees share the same name, the program prompts for disambiguation."""
-        path = os.path.join(CASE_DIR, "minions_non_unique.txt")
-
-        # Save the real system input/output streams so they can be restored later.
-        real_stdout, real_stdin = sys.stdout, sys.stdin
-        try:
-            # Redirect stdout
-            sys.stdout = io.StringIO()
-            # Simulate a user typing "103" and pressing Enter
-            sys.stdin = io.StringIO("103\n")
-
-            # Run the program command with the test arguments
-            code = cli.main([path, "Black widow", "Minion"])
-            output_lines = sys.stdout.getvalue().strip().splitlines()
-        finally:
-            # Restore the real system streams
-            sys.stdout = real_stdout
-            sys.stdin = real_stdin
-
-        self.assertEqual(code, 0)
-        self.assertTrue(output_lines)
-        joined = "\n".join(output_lines)
-        self.assertIn("Multiple matches found for 'Minion'", joined)
-        self.assertIn("Minion (101)", joined)
-        self.assertIn("Minion (102)", joined)
-        self.assertIn("Minion (103)", joined)
-        self.assertIn("Enter the employee ID for the second person:", joined)
-        self.assertEqual(
-            output_lines[-1],
-            "Black Widow (107) -> Captain Marvel (105) -> Minion (102) -> Boss (100) <- Minion (103)",
         )

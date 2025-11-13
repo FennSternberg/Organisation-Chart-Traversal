@@ -19,7 +19,6 @@ class Employee:
     name_normalized: str
     manager_id: Optional[int]
 
-
 class Organization:
     """Class representing the organisation structure."""
     def __init__(self, path: str):

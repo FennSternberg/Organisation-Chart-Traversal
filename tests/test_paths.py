@@ -13,7 +13,7 @@ def load_org(case_filename: str) -> Organization:
     return Organization(os.path.join(CASE_DIR, case_filename))
 
 
-class TestPathsExample(unittest.TestCase):
+class TestSuperheroesExample(unittest.TestCase):
     def test_batman_to_super_ted(self):
         org = load_org("superheroes.txt")
         a_ids = org.find_employee_ids_by_name("Batman")
@@ -35,6 +35,7 @@ class TestPathsExample(unittest.TestCase):
         )
 
 class TestMultipleRoots(unittest.TestCase):
+
     def test_multiple_roots_no_path(self):
         """
         Test that when there are multiple roots (missing manager ID's) and no path exists between two employees,
@@ -49,7 +50,6 @@ class TestMultipleRoots(unittest.TestCase):
         with self.assertRaises(ValueError):
             org.format_path_between(a_id, b_id)
 
-    
     def test_multiple_roots_path_exists(self):
         """
         Test that when there are multiple roots (missing manager ID's) and a path exists between two employees,
@@ -90,6 +90,16 @@ class TestRobustness(unittest.TestCase):
         org = load_org("superheroes_non_table_lines.txt")
         self.batman_to_super_ted(org)
     
+    def test_single_case(self):
+        org = load_org("superheroes.txt")
+        a_ids = org.find_employee_ids_by_name("Batman")
+        b_ids = org.find_employee_ids_by_name("Batman")
+        path = org.format_path_between(a_ids[0], b_ids[0])
+        self.assertEqual(
+            path,
+            "Batman (16)",
+        )
+    
     def test_missing_manager(self):
         """Test that missing manager ID raises ValueError when relevant to path."""
         org = load_org("superheroes_missing_manager.txt")
@@ -98,7 +108,6 @@ class TestRobustness(unittest.TestCase):
         with self.assertRaises(ValueError):
             org.format_path_between(a_id, b_id)
         
-    
     def test_missing_manager_still_works_if_irrelevant(self):
         """Test that missing manager ID does not prevent path formatting if not relevant."""
         org = load_org("superheroes_missing_manager.txt")
@@ -115,7 +124,6 @@ class TestRobustness(unittest.TestCase):
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("Gonzo the Great")
         b_ids = org.find_employee_ids_by_name("gon Zot Heg Reat")
-        self.assertTrue(a_ids and b_ids)
         path = org.format_path_between(a_ids[0], b_ids[0])
         self.assertEqual(
             path,
@@ -127,7 +135,6 @@ class TestRobustness(unittest.TestCase):
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("batman")
         b_ids = org.find_employee_ids_by_name("gonzo the GREAT")
-        self.assertTrue(a_ids and b_ids)
         path = org.format_path_between(a_ids[0], b_ids[0])
         self.assertEqual(
             path,
@@ -139,7 +146,6 @@ class TestRobustness(unittest.TestCase):
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("  BATMAN   ")
         b_ids = org.find_employee_ids_by_name(" Gonzo   the Great ")
-        self.assertTrue(a_ids and b_ids)
         path = org.format_path_between(a_ids[0], b_ids[0])
         self.assertEqual(
             path,

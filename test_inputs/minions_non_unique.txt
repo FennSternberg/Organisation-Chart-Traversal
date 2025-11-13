@@ -1,0 +1,9 @@
+| Employee ID | Name           | Manager ID |
+| 100         | Boss           |            |
+| 101         | Minion         | 106        |
+| 102         | Minion         | 100        |
+| 103         | Minion         | 100        |
+| 104         | Iron Man       | 102        |
+| 105         | Captain Marvel | 102        |
+| 106         | Spider-Man     | 104        |
+| 107         | Black Widow    | 105        |

@@ -1,8 +1,9 @@
 import sys
 from src.organization import Organization
 from src.visualize import ascii_forest
-if __name__ == "__main__":
-    argv = sys.argv[1:]
+
+
+def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     
@@ -21,16 +22,42 @@ if __name__ == "__main__":
                     .replace("─", "-")
                 )
                 print(safe)
-        sys.exit(0)
+        return 0
 
     input_path, name_a, name_b = argv
     org = Organization(input_path)
+
+    def choose_id(label:str, name:str, matches:list[int]) -> int:
+        if len(matches) < 2:
+            return matches[0]
+        print(f"Multiple matches found for '{name}'. Please choose by employee ID:")
+        
+        for eid in matches:
+            print(org.format_label(eid))
+        
+        valid = set(matches)
+        while True:
+            try:
+                print(f"Enter the employee ID for the {label} person:")
+                sel = input().strip()
+                choice = int(sel)
+            except ValueError:
+                print("Please enter a valid numeric employee ID.")
+                continue
+            if choice in valid:
+                return choice
+            print("Invalid selection. Valid IDs:", ", ".join(str(x) for x in sorted(valid)))
+
     matches_a = org.find_employee_ids_by_name(name_a)
     matches_b = org.find_employee_ids_by_name(name_b)
 
-    # later implment user interaction to select among multiple matches
-    a_id = matches_a[0]
-    b_id = matches_b[0]
+    # select among multiple matches
+    a_id = choose_id("first", name_a, matches_a)
+    b_id = choose_id("second", name_b, matches_b)
 
     fmt = org.format_path_between(a_id, b_id)
     print(fmt)
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main())

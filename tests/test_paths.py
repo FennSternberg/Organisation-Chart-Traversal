@@ -1,7 +1,9 @@
 import os
 import unittest
-
+import sys
+import io
 from src.organization import Organization
+import MyProgram as cli
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CASE_DIR = os.path.join(BASE_DIR, "test_inputs")
@@ -49,7 +51,6 @@ class TestMultipleRoots(unittest.TestCase):
 
     
     def test_multiple_roots_path_exists(self):
-
         """
         Test that when there are multiple roots (missing manager ID's) and a path exists between two employees,
         the path is formatted correctly.
@@ -64,7 +65,6 @@ class TestMultipleRoots(unittest.TestCase):
         )
 
 class TestRobustness(unittest.TestCase):
-
     def batman_to_super_ted(self, org:Organization):
         a_ids = org.find_employee_ids_by_name("Batman")
         b_ids = org.find_employee_ids_by_name("Super Ted")
@@ -111,6 +111,7 @@ class TestRobustness(unittest.TestCase):
         )
     
     def test_not_equivalent(self):
+        """Test that names which are not equivalent do not match."""
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("Gonzo the Great")
         b_ids = org.find_employee_ids_by_name("gon Zot Heg Reat")
@@ -122,6 +123,7 @@ class TestRobustness(unittest.TestCase):
         )
 
     def test_equivalent(self):
+        """Test that names which are equivalent match correctly."""
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("batman")
         b_ids = org.find_employee_ids_by_name("gonzo the GREAT")
@@ -133,6 +135,7 @@ class TestRobustness(unittest.TestCase):
         )
 
     def test_equivalent_with_extra_spaces(self):
+        """Test that names which are equivalent with extra spaces match correctly."""
         org = load_org("superheroes_spaces_and_caps.txt")
         a_ids = org.find_employee_ids_by_name("  BATMAN   ")
         b_ids = org.find_employee_ids_by_name(" Gonzo   the Great ")
@@ -144,6 +147,10 @@ class TestRobustness(unittest.TestCase):
         )
 
 class TestSingleChain(unittest.TestCase):
+    """
+    Test organization that is a single chain (each employee has exactly one manager,
+    except the root).
+    """
     def test_down_chain(self):
         org = load_org("single_chain.txt")
         a_id = org.find_employee_ids_by_name("Node1")[0]
@@ -162,4 +169,39 @@ class TestSingleChain(unittest.TestCase):
         self.assertEqual(
             path,
             "Node5 (5) -> Node4 (4) -> Node3 (3) -> Node2 (2) -> Node1 (1)",
+        )
+
+
+class TestNonUniqueNames(unittest.TestCase):
+    def test_non_unique_names(self):
+        """Test that when multiple employees share the same name, the program prompts for disambiguation."""
+        path = os.path.join(CASE_DIR, "minions_non_unique.txt")
+
+        # Save the real system input/output streams so they can be restored later.
+        real_stdout, real_stdin = sys.stdout, sys.stdin
+        try:
+            # Redirect stdout
+            sys.stdout = io.StringIO()
+            # Simulate a user typing "103" and pressing Enter
+            sys.stdin = io.StringIO("103\n")
+
+            # Run the program command with the test arguments
+            code = cli.main([path, "Black widow", "Minion"])
+            output_lines = sys.stdout.getvalue().strip().splitlines()
+        finally:
+            # Restore the real system streams
+            sys.stdout = real_stdout
+            sys.stdin = real_stdin
+
+        self.assertEqual(code, 0)
+        self.assertTrue(output_lines)
+        joined = "\n".join(output_lines)
+        self.assertIn("Multiple matches found for 'Minion'", joined)
+        self.assertIn("Minion (101)", joined)
+        self.assertIn("Minion (102)", joined)
+        self.assertIn("Minion (103)", joined)
+        self.assertIn("Enter the employee ID for the second person:", joined)
+        self.assertEqual(
+            output_lines[-1],
+            "Black Widow (107) -> Captain Marvel (105) -> Minion (102) -> Boss (100) <- Minion (103)",
         )

@@ -2,12 +2,27 @@ import sys
 from src.organization import Organization
 from src.visualize import ascii_forest
 
+def print_usage():
+    msg = (
+        "Usage:\n"
+        "  python MyProgram.py <input.txt> \"Name A\" \"Name B\"\n"
+        "  python MyProgram.py --visualize <input.txt>\n"
+    )
+    sys.stderr.write(msg)
 
 def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
     
+    if not argv or argv[0] in {"-h", "--help"}:
+        print_usage()
+        return 0
+    
     if argv[0] == "--visualize":
+        if len(argv) != 2:
+            print_usage()
+            return 2
+        input_path = argv[1]
         input_path = argv[1]
         org = Organization(input_path)
         for line in ascii_forest(org):
@@ -23,6 +38,10 @@ def main(argv=None):
                 )
                 print(safe)
         return 0
+    
+    if len(argv) != 3:
+        print_usage()
+        return 2
 
     input_path, name_a, name_b = argv
     org = Organization(input_path)

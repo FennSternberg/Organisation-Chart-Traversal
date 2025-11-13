@@ -1,11 +1,6 @@
 from typing import Dict, List, Optional
 from dataclasses import dataclass
 import re
-import warnings
-def warning_format(message, category, filename, lineno, line=None):
-    return f"Warning: {message}\n"
-
-warnings.formatwarning = warning_format
 
 def collapse_spaces(s: str) -> str:
     _SPACE_RE = re.compile(r"\s+")
@@ -13,7 +8,6 @@ def collapse_spaces(s: str) -> str:
 
 def normalize_name(name: str) -> str:
     """Normalize a name by removing extra spaces and converting to lowercase."""
-    
     return collapse_spaces(name).lower()
 
 @dataclass
@@ -62,9 +56,7 @@ class Organization:
                 
                 name = parts[2]
                 manager_id = int(parts[3]) if parts[3] != "" else None
-
                 name_normalized = normalize_name(name)
-
                 employees[emp_id] = Employee(
                     emp_id=emp_id,
                     name_display=collapse_spaces(name),
@@ -149,4 +141,3 @@ class Organization:
             parts.append("<-")
             parts.append(self.format_label(eid))
         return " ".join(parts)
-            

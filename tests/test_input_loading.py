@@ -11,7 +11,7 @@ def load_org(case_filename: str) -> Organization:
 class TestInputLoading(unittest.TestCase):
     def generic_superheroes_input_check(self, org: Organization):
         self.assertEqual(len(org.employees), 8)
-
+        
         self.assertEqual(org.employees[1].name_normalized, "dangermouse")
         self.assertEqual(org.employees[1].manager_id, None)
         self.assertEqual(org.get_children(1), [2, 3])
@@ -43,7 +43,6 @@ class TestInputLoading(unittest.TestCase):
         self.assertEqual(org.employees[17].name_normalized, "catwoman")
         self.assertEqual(org.employees[17].manager_id, 6)
         self.assertEqual(org.get_children(17), [])
-
 
     def test_superheroes(self):
         org = load_org("superheroes.txt")

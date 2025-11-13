@@ -64,7 +64,9 @@ class TestInputLoading(unittest.TestCase):
     def test_superheroes_non_table_lines(self):
         org = load_org("superheroes_non_table_lines.txt")
         self.generic_superheroes_input_check(org)
-    
+
+class TestInputLoading(unittest.TestCase):
+    """Tests for input loading that should cause errors."""
     def test_missing_employee_id(self):
         """Test that missing employee ID raises ValueError."""
         with self.assertRaises(ValueError):

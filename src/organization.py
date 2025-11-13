@@ -1,6 +1,11 @@
-from typing import Dict, List, Optional, Iterable
+from typing import Dict, List, Optional
 from dataclasses import dataclass
 import re
+import warnings
+def warning_format(message, category, filename, lineno, line=None):
+    return f"Warning: {message}\n"
+
+warnings.formatwarning = warning_format
 
 def collapse_spaces(s: str) -> str:
     _SPACE_RE = re.compile(r"\s+")
@@ -33,8 +38,9 @@ class Organization:
     def _process_file(path:str)->Dict[int, Employee]:
         """Process the input file and return a mapping of employee ID to Employee."""
         employees: Dict[int, Employee] = {}
+    
         with open(path, "r", encoding="utf-8") as f:
-            for lineno, line in enumerate(f):
+            for line in f:
                 if not line.strip():
                     # Skip empty lines
                     continue
@@ -47,10 +53,8 @@ class Organization:
                 try:
                     emp_id = int(parts[1])
                 except ValueError:
-                    # Employee ID is required and must be numeric
-                    raise ValueError(
-                        f"Invalid or missing employee ID at line {lineno}: {parts[1]!r}"
-                    ) from None
+                    # Employee ID is missing
+                    continue
                 
                 if emp_id in employees:
                     # Duplicate employee IDs are invalid

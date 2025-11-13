@@ -11,6 +11,7 @@ def load_org(case_filename: str) -> Organization:
 class TestRoots(unittest.TestCase):
     def test_superheroes(self):
         org = load_org("superheroes.txt")
+        print(org.roots())
         self.assertEqual(org.roots(), [1])
         
     def test_multiple_roots(self):

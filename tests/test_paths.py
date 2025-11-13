@@ -8,8 +8,8 @@ CASE_DIR = os.path.join(BASE_DIR, "tests\\test_inputs")
 def load_org(case_filename: str) -> Organization:
     return Organization(os.path.join(CASE_DIR, case_filename))
 
-
 class TestSuperheroesExample(unittest.TestCase):
+    """Tests cases provided in task pdf"""
     def test_batman_to_super_ted(self):
         org = load_org("superheroes.txt")
         a_ids = org.find_employee_ids_by_name("Batman")
@@ -37,7 +37,6 @@ class TestMultipleRoots(unittest.TestCase):
         an error is raised.
         """
         org = load_org("superheroes_multiple_roots.txt")
-        # Two roots expected: 1 and 50
         roots = org.roots()
         self.assertEqual(roots, [1, 3])
         a_id = org.find_employee_ids_by_name("Batman")[0]

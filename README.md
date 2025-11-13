@@ -3,6 +3,11 @@
 This repository implements a command-line program for for Superheroes Inc, an old-fashioned company which has very strict rules about only passing information up and down the
 management chain. Given details of the organisational chart and the names of two people, it prints out the names of all the people in the chain between them.
 
+## Requirements
+
+- Python 3.13.9 or later
+- No non-standard libraries required
+  
 ## Usage
 
 - Find a path between two names:
@@ -56,4 +61,29 @@ The program expects a pipe-separated table:
 - The header row is required.
 - `Employee ID` and `Manager ID` are integers; `Manager ID` may be blank for root(s).
 - Rows may appear in any order
-- Non uniqueness of names is tolerated, but further user input will be requested if non-uniqueness leads to amiguity in the communication path.
+- Non-table lines will be ignored
+- Lines without an employee Id will be ignored
+- Duplicate employee Ids are not allowed, and an error will be raised if they exist in the input file.
+- Cyclic management chains will raise an error.
+
+## Behavior and Rules
+
+- Name comparisons ignore case, leading/trailing spaces, and runs of multiple spaces.
+- If either name matches more than one employee (duplicate names), the program interactively prompts you to choose the intended employee by entering their employee ID. It displays all matching `ID - Name` options from the input file before prompting.
+- The path formatting shows direction relative to the first name:
+  - `->` moves upward (employee to manager)
+  - `<-` moves downward (manager to subordinate)
+
+## Running Tests
+
+This project uses the standard library `unittest` module.
+
+`python -m unittest discover -s tests -p "test_*.py" -v`
+
+## File Layout
+
+- `MyProgram.py` — CLI entry point.
+- `src/organization.py` — Input file parsing, and path finding/formatting.
+- `src/visualize.py` — ASCII tree printer for the organization chart.
+- `tests/` — Unit tests
+- `tests/test_inputs` - Test input files

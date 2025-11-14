@@ -1,5 +1,9 @@
+"""
+Inspiration from https://stackoverflow.com/questions/9727673/list-directory-tree-structure-in-python
+"""
 from typing import Iterable
 from .organization import Organization
+
 
 def ascii_forest(org: Organization) -> Iterable[str]:
     """Yield a clean ASCII tree for each root in the org.

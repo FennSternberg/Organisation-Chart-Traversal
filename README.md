@@ -61,6 +61,7 @@ The program expects a pipe-separated table:
 - The header row is required.
 - `Employee ID` and `Manager ID` are integers; `Manager ID` may be blank for root(s).
 - Rows may appear in any order
+- Columns may appear in any order
 - Non-table lines will be ignored
 - Lines without an employee Id will be ignored
 - Duplicate employee Ids are not allowed, and an error will be raised if they exist in the input file.

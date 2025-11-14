@@ -32,6 +32,7 @@ class Organization:
     def _process_file(path:str)->Dict[int, Employee]:
         """Process the input file and return a mapping of employee ID to Employee."""
         employees: Dict[int, Employee] = {}
+        header_map: Dict[str, int] = None
     
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
@@ -41,11 +42,21 @@ class Organization:
                 parts = [p.strip() for p in line.split("|")]
                 if len(parts) < 4:
                     continue
-                if parts[1].lower() == "employee id":
-                    # header row
+                
+                if not header_map:
+                    # Detect header row and dynamically capture column indices
+                    normalized = {normalize_name(p): idx for idx, p in enumerate(parts) if p}
+                    wanted = {"employee id", "name", "manager id"}
+                    if wanted.issubset(normalized.keys()):
+                        header_map = {key: normalized[key] for key in wanted}
+                        col_map = header_map
+                        emp_idx = col_map["employee id"]
+                        name_idx = col_map["name"]
+                        mgr_idx = col_map["manager id"]
                     continue
+
                 try:
-                    emp_id = int(parts[1])
+                    emp_id = int(parts[emp_idx])
                 except ValueError:
                     # Employee ID is missing
                     continue
@@ -54,8 +65,8 @@ class Organization:
                     # Duplicate employee IDs are invalid
                     raise ValueError(f"Duplicate employee ID detected: {emp_id}")
                 
-                name = parts[2]
-                manager_id = int(parts[3]) if parts[3] != "" else None
+                name = parts[name_idx]
+                manager_id = int(parts[mgr_idx]) if parts[mgr_idx] != "" else None
                 name_normalized = normalize_name(name)
                 employees[emp_id] = Employee(
                     emp_id=emp_id,

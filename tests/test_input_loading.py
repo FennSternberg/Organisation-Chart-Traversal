@@ -60,6 +60,10 @@ class TestInputLoading(unittest.TestCase):
         org = load_org("superheroes_non_table_lines.txt")
         self.generic_superheroes_input_check(org)
     
+    def test_superheroes(self):
+        org = load_org("superheroes_column_swap.txt")
+        self.generic_superheroes_input_check(org)
+    
     def test_missing_employee_id(self):
         """Test that lines with a missing employee Id are skipped."""
         org = load_org("superheroes_missing_employee_id.txt")

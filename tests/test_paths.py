@@ -71,6 +71,10 @@ class TestRobustness(unittest.TestCase):
     def test_order_independence(self):
         org = load_org("superheroes_shuffled.txt")
         self.batman_to_super_ted(org)
+    
+    def test_order_independence(self):
+        org = load_org("superheroes_column_swap.txt")
+        self.batman_to_super_ted(org)
 
     def test_name_normalization(self):
         org = load_org("superheroes.txt")

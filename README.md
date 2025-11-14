@@ -60,14 +60,14 @@ The program expects a pipe-separated table:
 
 - The header row is required.
 - `Employee ID` and `Manager ID` are integers
-- `Manager ID` may be blank for root(s).
+- `Manager ID` may be blank for root(s)
 - Any columns not labelled with `Employee ID`, `Manager ID` or `Name` will be ignored
 - Rows may appear in any order
 - Columns may appear in any order
 - Non-table lines will be ignored
 - Lines without an employee Id will be ignored
-- Duplicate `Employee ID`s are not allowed, and an error will be raised if they exist in the input file.
-- Cyclic management chains will raise an error.
+- Duplicate `Employee ID`s are not allowed, and an error will be raised if they exist in the input file
+- Cyclic management chains will raise an error
 
 ## Behavior and Rules
 

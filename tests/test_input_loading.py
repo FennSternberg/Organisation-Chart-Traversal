@@ -60,7 +60,11 @@ class TestInputLoading(unittest.TestCase):
         org = load_org("superheroes_non_table_lines.txt")
         self.generic_superheroes_input_check(org)
     
-    def test_superheroes(self):
+    def test_superheroes_column_swap(self):
+        org = load_org("superheroes_column_swap.txt")
+        self.generic_superheroes_input_check(org)
+    
+    def test_superheroes_extra_column(self):
         org = load_org("superheroes_column_swap.txt")
         self.generic_superheroes_input_check(org)
     

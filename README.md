@@ -59,7 +59,9 @@ The program expects a pipe-separated table:
 ```
 
 - The header row is required.
-- `Employee ID` and `Manager ID` are integers; `Manager ID` may be blank for root(s).
+- `Employee ID` and `Manager ID` are integers
+- `Manager ID` may be blank for root(s).
+- Any columns not labelled with `Employee ID`, `Manager ID` or `Name` will be ignored
 - Rows may appear in any order
 - Columns may appear in any order
 - Non-table lines will be ignored

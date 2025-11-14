@@ -58,7 +58,7 @@ The program expects a pipe-separated table:
 | 17          | Catwoman        | 6          |
 ```
 
-- The header row is required.
+- The header row is required
 - `Employee ID` and `Manager ID` are integers
 - `Manager ID` may be blank for root(s)
 - Any columns not labelled with `Employee ID`, `Manager ID` or `Name` will be ignored

@@ -64,13 +64,13 @@ The program expects a pipe-separated table:
 - Columns may appear in any order
 - Non-table lines will be ignored
 - Lines without an employee Id will be ignored
-- Duplicate employee Ids are not allowed, and an error will be raised if they exist in the input file.
+- Duplicate `Employee ID`s are not allowed, and an error will be raised if they exist in the input file.
 - Cyclic management chains will raise an error.
 
 ## Behavior and Rules
 
 - Name comparisons ignore case, leading/trailing spaces, and runs of multiple spaces.
-- If either name matches more than one employee (duplicate names), the program interactively prompts you to choose the intended employee by entering their employee ID. It displays all matching `ID - Name` options from the input file before prompting.
+- If either name matches more than one employee (duplicate names), the program interactively prompts you to choose the intended employee by entering their `employee ID`. It displays all matching `ID - Name` options from the input file before prompting.
 - The path formatting shows direction relative to the first name:
   - `->` moves upward (employee to manager)
   - `<-` moves downward (manager to subordinate)

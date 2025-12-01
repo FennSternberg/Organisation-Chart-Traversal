@@ -28,7 +28,7 @@ management chain. Given details of the organisational chart and the names of two
 
   Example:
 
-  `python MyProgram.py --visualize python MyProgram.py tests/test_inputs/superheroes.txt`
+  `python MyProgram.py --visualize tests/test_inputs/superheroes.txt`
 
   Output:
 
